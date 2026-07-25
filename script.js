@@ -266,3 +266,421 @@ document.addEventListener("keydown", (e) => {
     }
 
 });
+/* =====================================
+   Gallery Animation & Touch Support
+===================================== */
+
+// Fade Animation
+
+lightboxImage.addEventListener("load", () => {
+
+    lightboxImage.style.opacity = "0";
+
+    setTimeout(() => {
+
+        lightboxImage.style.transition = "opacity .35s ease";
+
+        lightboxImage.style.opacity = "1";
+
+    }, 50);
+
+});
+
+// Disable Image Drag
+
+galleryItems.forEach(image => {
+
+    image.setAttribute("draggable", "false");
+
+});
+
+// Touch Support
+
+let touchStartX = 0;
+
+lightbox.addEventListener("touchstart", (e) => {
+
+    touchStartX = e.changedTouches[0].clientX;
+
+});
+
+lightbox.addEventListener("touchend", (e) => {
+
+    const touchEndX = e.changedTouches[0].clientX;
+
+    if (Math.abs(touchStartX - touchEndX) > 120) {
+
+        lightbox.classList.remove("active");
+
+        document.body.style.overflow = "auto";
+
+    }
+
+});
+
+// Prevent Background Scroll on Mobile
+
+lightbox.addEventListener("touchmove", (e) => {
+
+    e.preventDefault();
+
+}, { passive: false });
+/* =====================================
+   Counter Animation
+===================================== */
+
+const counters = document.querySelectorAll(".counter");
+
+const startCounter = () => {
+
+    counters.forEach(counter => {
+
+        const target = Number(counter.dataset.target);
+
+        let count = 0;
+
+        const speed = Math.max(1, Math.floor(target / 100));
+
+        const updateCounter = () => {
+
+            if (count < target) {
+
+                count += speed;
+
+                if (count > target) count = target;
+
+                counter.innerText = count;
+
+                requestAnimationFrame(updateCounter);
+
+            } else {
+
+                counter.innerText = target;
+
+            }
+
+        };
+
+        updateCounter();
+
+    });
+
+};
+
+let counterStarted = false;
+
+window.addEventListener("scroll", () => {
+
+    const statsSection = document.querySelector(".stats");
+
+    if (!statsSection || counterStarted) return;
+
+    const top = statsSection.getBoundingClientRect().top;
+
+    if (top < window.innerHeight - 100) {
+
+        counterStarted = true;
+
+        startCounter();
+
+    }
+
+});
+
+/* =====================================
+   Counter Animation - Part 3B
+===================================== */
+
+const counters = document.querySelectorAll(".counter");
+
+const startCounter = (counter) => {
+
+    const target = Number(counter.getAttribute("data-target"));
+
+    let count = 0;
+
+    const speed = Math.max(10, Math.floor(target / 100));
+
+    const update = () => {
+
+        count += speed;
+
+        if (count >= target) {
+
+            counter.innerText = target.toLocaleString("en-IN");
+
+        } else {
+
+            counter.innerText = count.toLocaleString("en-IN");
+
+            requestAnimationFrame(update);
+
+        }
+
+    };
+
+    update();
+
+};
+
+const counterObserver = new IntersectionObserver((entries) => {
+
+    entries.forEach(entry => {
+
+        if (entry.isIntersecting) {
+
+            startCounter(entry.target);
+
+            counterObserver.unobserve(entry.target);
+
+        }
+
+    });
+
+}, {
+
+    threshold: 0.5
+
+});
+
+counters.forEach(counter => {
+
+    counterObserver.observe(counter);
+
+});
+/* =====================================
+   Scroll Reveal Animation - Part 3C
+===================================== */
+
+const revealElements = document.querySelectorAll(
+    ".about-content, .about-image, .history-content, .history-image, .committee-card, .gallery-item, .timeline-item, .finance-card, .notice-card, .contact-card, .footer-content"
+);
+
+const revealObserver = new IntersectionObserver((entries) => {
+
+    entries.forEach(entry => {
+
+        if (entry.isIntersecting) {
+
+            entry.target.style.opacity = "1";
+            entry.target.style.transform = "translateY(0)";
+            entry.target.style.transition = "all .8s ease";
+
+            revealObserver.unobserve(entry.target);
+
+        }
+
+    });
+
+}, {
+
+    threshold: 0.15
+
+});
+
+revealElements.forEach(item => {
+
+    item.style.opacity = "0";
+    item.style.transform = "translateY(40px)";
+
+    revealObserver.observe(item);
+
+});
+
+/* =====================================
+   Console Message
+===================================== */
+
+console.log(
+    "🚩 Navyug Pratishthan Sansar Website Loaded Successfully!"
+);
+/* =====================================
+   Loading Screen & Page Effects
+===================================== */
+
+window.addEventListener("load", () => {
+
+    const loader = document.querySelector(".loader");
+
+    if (loader) {
+
+        loader.style.opacity = "0";
+
+        setTimeout(() => {
+
+            loader.style.display = "none";
+
+        }, 600);
+
+    }
+
+});
+
+/* =====================================
+   Button Ripple Effect
+===================================== */
+
+document.querySelectorAll(".btn").forEach(button => {
+
+    button.addEventListener("click", function (e) {
+
+        const ripple = document.createElement("span");
+
+        const rect = this.getBoundingClientRect();
+
+        const size = Math.max(rect.width, rect.height);
+
+        ripple.style.width = ripple.style.height = size + "px";
+
+        ripple.style.left = (e.clientX - rect.left - size / 2) + "px";
+
+        ripple.style.top = (e.clientY - rect.top - size / 2) + "px";
+
+        ripple.classList.add("ripple");
+
+        this.appendChild(ripple);
+
+        setTimeout(() => {
+
+            ripple.remove();
+
+        }, 600);
+
+    });
+
+});
+
+/* =====================================
+   Current Year in Footer
+===================================== */
+
+const year = document.querySelector(".current-year");
+
+if (year) {
+
+    year.textContent = new Date().getFullYear();
+
+}
+/* =====================================
+   Contact Form Validation
+===================================== */
+
+const contactForm = document.querySelector(".contact-form form");
+
+if (contactForm) {
+
+    contactForm.addEventListener("submit", function (e) {
+
+        e.preventDefault();
+
+        const name = this.querySelector('input[type="text"]');
+        const email = this.querySelector('input[type="email"]');
+        const message = this.querySelector("textarea");
+
+        if (
+            name.value.trim() === "" ||
+            message.value.trim() === ""
+        ) {
+
+            alert("कृपया आवश्यक माहिती भरा.");
+
+            return;
+
+        }
+
+        alert("आपला संदेश यशस्वीरित्या पाठवला गेला.");
+
+        this.reset();
+
+    });
+
+}
+
+/* =====================================
+   Admin Login Button
+===================================== */
+
+const adminButton = document.querySelector(".admin-login");
+
+if (adminButton) {
+
+    adminButton.addEventListener("click", function (e) {
+
+        e.preventDefault();
+
+        const password = prompt("प्रशासक संकेतशब्द प्रविष्ट करा");
+
+        if (password === "admin123") {
+
+            alert("प्रशासक प्रवेश यशस्वी.");
+
+            window.location.href = "admin.html";
+
+        } else {
+
+            alert("चुकीचा संकेतशब्द.");
+
+        }
+
+    });
+
+}
+/* =====================================
+   Final Website Initialization
+===================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    console.log("🚩 नवयुग प्रतिष्ठान सणसर");
+
+    console.log("✅ HTML Loaded");
+    console.log("✅ CSS Loaded");
+    console.log("✅ JavaScript Loaded");
+
+});
+
+/* =====================================
+   Disable Right Click
+===================================== */
+
+document.addEventListener("contextmenu", function(e){
+
+    e.preventDefault();
+
+});
+
+/* =====================================
+   Disable F12 & Developer Shortcuts
+===================================== */
+
+document.addEventListener("keydown", function(e){
+
+    if(
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key === "I") ||
+        (e.ctrlKey && e.shiftKey && e.key === "J") ||
+        (e.ctrlKey && e.shiftKey && e.key === "C") ||
+        (e.ctrlKey && e.key === "U")
+    ){
+
+        e.preventDefault();
+
+    }
+
+});
+
+/* =====================================
+   Image Lazy Loading
+===================================== */
+
+document.querySelectorAll("img").forEach(img=>{
+
+    img.loading="lazy";
+
+});
+
+/* =====================================
+   Finished
+===================================== */
+
+console.log("🎉 Website Ready Successfully");
